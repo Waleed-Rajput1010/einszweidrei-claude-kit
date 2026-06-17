@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "einszweidrei",
+  "displayName": "EinsZweiDrei Claude Kit",
+  "description": "A reusable Claude Code developer kit: opinionated CLAUDE.md, subagents, slash commands, skills, and settings you can drop into any project.",
+  "version": "0.1.0",
+  "author": {
+    "name": "EinsZweiDrei.ai",
+    "url": "https://einszweidrei.ai"
+  },
+  "homepage": "https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit",
+  "repository": "https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit",
+  "license": "MIT",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "developer-kit",
+    "subagents",
+    "slash-commands",
+    "skills",
+    "template"
+  ],
+  "commands": "./template/.claude/commands",
+  "agents": "./template/.claude/agents",
+  "skills": "./template/.claude/skills"
+}

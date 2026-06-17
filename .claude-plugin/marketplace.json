@@ -1,0 +1,17 @@
+{
+  "name": "einszweidrei-kit",
+  "owner": {
+    "name": "EinsZweiDrei.ai",
+    "url": "https://einszweidrei.ai"
+  },
+  "metadata": {
+    "description": "The EinsZweiDrei Claude Code developer kit — subagents, slash commands, skills, and settings, distributed as an installable plugin."
+  },
+  "plugins": [
+    {
+      "name": "einszweidrei",
+      "source": "./",
+      "description": "Opinionated Claude Code developer kit: subagents, slash commands, and skills from a single source of truth under template/.claude/."
+    }
+  ]
+}
