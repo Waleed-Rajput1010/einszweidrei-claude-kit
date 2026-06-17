@@ -1,0 +1,14 @@
+# Normalize line endings. Text files are stored as LF in the repository;
+# Git converts to the platform's native ending on checkout where appropriate.
+* text=auto
+
+# Scripts that an interpreter executes MUST keep LF on every platform —
+# CRLF breaks the shebang and `bash`/`sh` parsing on a Windows checkout.
+*.sh   text eol=lf
+*.py   text eol=lf
+
+# Common explicit text types (kept LF in the repo via text=auto, listed for clarity).
+*.md   text
+*.json text
+*.yml  text
+*.yaml text

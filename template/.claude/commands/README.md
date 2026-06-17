@@ -4,7 +4,7 @@ Each `*.md` file in this directory becomes a slash command. The filename (withou
 `.md`) is the command name. Nested subdirectories create namespaced commands.
 
 - **Copy-in users** invoke a command as `/name`.
-- **Plugin users** invoke it as `/einszweidrei:name`.
+- **Plugin users** invoke it as `/ezd-claude-kit:name`.
 
 This README is a format guide and keepfile — drop your own `*.md` commands beside it.
 

@@ -20,12 +20,14 @@ coordinated disclosure timeline.
 
 ## Trust and Review Before Use
 
-This developer kit ships **commands, agents, and skills that Claude Code
-executes on your machine**. Treat every component like source code you would
-run locally:
+This developer kit ships **commands, agents, skills, shell scripts, and a Git
+hook that Claude Code (or your shell) executes on your machine**. Treat every
+component like source code you would run locally:
 
-- **Review** the contents of `template/.claude/commands/`, `agents/`, and
-  `skills/` before installing or enabling them in a project.
+- **Review** the contents before installing or enabling them in a project —
+  especially the things that run automatically: `template/.claude/scripts/`
+  (e.g. `claude-audit.sh`) and `template/.claude/hooks/` (the pre-commit hook
+  wired up in `settings.json`), alongside `commands/`, `agents/`, and `skills/`.
 - **Pin** to a specific git tag or release so you can audit exactly what you
   install instead of silently picking up changes from a branch.
 - **Customize** permissions in `template/.claude/settings.json` (or your

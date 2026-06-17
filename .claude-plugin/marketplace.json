@@ -1,5 +1,5 @@
 {
-  "name": "einszweidrei-kit",
+  "name": "einszweidrei-ai",
   "owner": {
     "name": "EinsZweiDrei.ai",
     "url": "https://einszweidrei.ai"
@@ -9,7 +9,7 @@
   },
   "plugins": [
     {
-      "name": "einszweidrei",
+      "name": "ezd-claude-kit",
       "source": "./",
       "description": "Opinionated Claude Code developer kit: subagents, slash commands, and skills from a single source of truth under template/.claude/."
     }

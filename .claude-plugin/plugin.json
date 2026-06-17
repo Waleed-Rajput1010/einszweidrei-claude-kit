@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "einszweidrei",
+  "name": "ezd-claude-kit",
   "displayName": "EinsZweiDrei Claude Kit",
   "description": "A reusable Claude Code developer kit: opinionated CLAUDE.md, subagents, slash commands, skills, and settings you can drop into any project.",
   "version": "0.1.0",

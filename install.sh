@@ -46,6 +46,15 @@ find "$SRC_DIR" -type f | while IFS= read -r src; do
   rel=${src#"$SRC_DIR"/}
   dest="$TARGET_DIR/$rel"
 
+  # Never distribute personal config — settings.local.json is per-developer and
+  # gitignored, so it must not be copied into a target project.
+  case "$rel" in
+    *settings.local.json)
+      echo "  skip   $rel (personal config, never distributed)"
+      continue
+      ;;
+  esac
+
   if [ -e "$dest" ] && [ "$FORCE" != "1" ]; then
     echo "  skip   $rel (exists)"
     skipped=$((skipped + 1))
