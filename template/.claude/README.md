@@ -22,7 +22,7 @@ CLAUDE.md                     # PORTABLE — stack-agnostic engineering standard
 │   ├── frontend.md           #   paths: **/*.{ts,tsx,vue,...}  — TS/React/Vue
 │   └── testing.md            #   paths: test files
 ├── commands/                 # PORTABLE — slash commands (e.g. /claude-audit)
-├── scripts/                  # PORTABLE — kit utilities (claude-audit.sh)
+├── scripts/                  # PORTABLE — kit utilities (claude-audit.py)
 ├── hooks/                    # PORTABLE — hook scripts (pre-commit-audit.sh)
 └── project/                  # PROJECT-SPECIFIC — do NOT copy to other repos
     ├── context.md            #   profile: stack, layout, conventions, key libraries
@@ -59,7 +59,7 @@ CLAUDE.md                     # PORTABLE — stack-agnostic engineering standard
 
 ## Maintaining the kit
 
-Run **`/claude-audit`** (or `bash .claude/scripts/claude-audit.sh`) to check the kit's
+Run **`/claude-audit`** (or `python .claude/scripts/claude-audit.py`) to check the kit's
 consistency: broken links, agent/rule frontmatter, agent-name uniqueness, stale path
 references, and project-name leakage into portable files. It's deterministic — no agent
 needed for the mechanical checks; use the main session for judgment work (new agents, ADRs).

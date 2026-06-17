@@ -26,7 +26,7 @@ You can use either or both.
 | Subagents          | `template/.claude/agents/`                | ~21 specialist agents in `backend/`, `frontend/`, `infra/`, `quality/`.         |
 | Stack rules        | `template/.claude/rules/`                  | File-type rules (.NET, controllers, repositories, services, frontend, testing) plus always-on `code-review.md` and `security.md`. |
 | Slash commands     | `template/.claude/commands/`              | `*.md` commands (e.g. `/claude-audit`); format guide in the README there.       |
-| Audit tooling      | `template/.claude/scripts/` + `hooks/`    | `claude-audit.sh` consistency check and the `pre-commit-audit.sh` hook.         |
+| Audit tooling      | `template/.claude/scripts/` + `hooks/`    | `claude-audit.py` consistency check and the `pre-commit-audit.sh` hook launcher. |
 | Project instance   | `template/.claude/project/`               | Per-repo `context.md` profile + `tech-debt.md` register (placeholders to fill). |
 | Skills             | `template/.claude/skills/`                | `<name>/SKILL.md` skills (format guide in the README there; none shipped yet).  |
 
@@ -54,19 +54,28 @@ delivers commands, agents, and skills, and stays updatable.
 
 ### Option 2 — Copy into your project
 
-Clone the repo and run the installer against your project directory:
+Clone the repo and run the installer against your project directory. The installer
+is **Python 3, standard-library only** — no dependencies — and runs the same on
+Windows, Linux, and macOS:
 
 ```sh
 git clone https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit.git
 cd einszweidrei-claude-kit
+python install.py /path/to/your/project
+```
+
+On Linux/macOS you can also use the `./install.sh` shim (it just forwards to
+`install.py`):
+
+```sh
 ./install.sh /path/to/your/project
 ```
 
 The installer is non-destructive: it skips files that already exist. To overwrite,
-set `FORCE=1`:
+pass `--force` (or set `FORCE=1`):
 
 ```sh
-FORCE=1 ./install.sh /path/to/your/project
+python install.py /path/to/your/project --force
 ```
 
 With no argument it installs into the current directory. Copy-in commands are
@@ -88,11 +97,12 @@ einszweidrei-claude-kit/
 │       ├── commands/        # *.md slash commands (e.g. /claude-audit) (+ format guide)
 │       ├── agents/          # subagents in backend/ frontend/ infra/ quality/ (+ format guide)
 │       ├── rules/           # stack rules that auto-apply by file type
-│       ├── scripts/         # claude-audit.sh consistency check
-│       ├── hooks/           # pre-commit-audit.sh
+│       ├── scripts/         # claude-audit.py consistency check
+│       ├── hooks/           # pre-commit-audit.sh (launcher for the audit)
 │       ├── project/         # per-repo context.md + tech-debt.md (placeholders)
 │       └── skills/          # <name>/SKILL.md (+ format guide)
-├── install.sh               # copy-in installer (non-destructive unless FORCE=1)
+├── install.py               # cross-platform copy-in installer (non-destructive unless --force)
+├── install.sh               # POSIX shim that forwards to install.py
 ├── scripts/validate.py      # no-dependency validator for CI
 ├── .gitattributes           # forces LF for scripts on every platform
 ├── README.md

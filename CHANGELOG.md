@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Cross-platform installer and audit: ported `install.sh` and the bash
+  `claude-audit.sh` to standard-library Python (`install.py`,
+  `template/.claude/scripts/claude-audit.py`) so they run natively on Windows,
+  Linux, and macOS with no Git Bash dependency. `install.sh` and
+  `pre-commit-audit.sh` are now thin POSIX launchers that forward to the Python
+  scripts (single source of truth). CI now runs the validator and installer on
+  both `ubuntu-latest` and `windows-latest`.
+
+### Removed
+
+- `template/.claude/scripts/claude-audit.sh` (replaced by `claude-audit.py`).
+
 ## [0.2.0] - 2026-06-17
 
 ### Changed

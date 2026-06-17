@@ -1,74 +1,24 @@
 #!/bin/sh
-# install.sh — copy the EinsZweiDrei Claude Kit template into a project.
+# install.sh — thin POSIX shim around install.py (the cross-platform installer).
 #
 # Usage:
-#   ./install.sh [TARGET_DIR]
+#   ./install.sh [TARGET_DIR]      install into TARGET_DIR (default: current dir)
+#   FORCE=1 ./install.sh [DIR]     overwrite files that already exist
 #
-#   TARGET_DIR   Directory to install into. Defaults to the current directory.
-#   FORCE=1      Overwrite files that already exist (default: skip them).
-#
-# Copies everything under ./template/ into TARGET_DIR, mirroring paths. This
-# delivers CLAUDE.md and .claude/ (settings, commands, agents, skills) into a
-# project — content the plugin system cannot inject for you.
-#
-# Non-destructive by default: existing files are skipped unless FORCE=1.
-
+# The real logic lives in install.py so Windows, Linux, and macOS share one
+# implementation. This shim just locates a Python 3 interpreter and forwards to it.
 set -eu
 
-# Resolve the directory this script lives in (so it works from anywhere).
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-SRC_DIR="$SCRIPT_DIR/template"
 
-TARGET_DIR=${1:-.}
-FORCE=${FORCE:-0}
-
-if [ ! -d "$SRC_DIR" ]; then
-  echo "error: template directory not found at $SRC_DIR" >&2
+if command -v python3 >/dev/null 2>&1; then
+  PY=python3
+elif command -v python >/dev/null 2>&1; then
+  PY=python
+else
+  echo "error: Python 3 is required but neither 'python3' nor 'python' was found on PATH." >&2
+  echo "       Install Python 3, or run the installer directly: python3 install.py [TARGET_DIR]" >&2
   exit 1
 fi
 
-# Create target dir if needed.
-mkdir -p "$TARGET_DIR"
-TARGET_DIR=$(CDPATH= cd -- "$TARGET_DIR" && pwd)
-
-echo "Installing EinsZweiDrei Claude Kit"
-echo "  from: $SRC_DIR"
-echo "  into: $TARGET_DIR"
-[ "$FORCE" = "1" ] && echo "  mode: FORCE (overwriting existing files)" || echo "  mode: non-destructive (skipping existing files)"
-echo
-
-wrote=0
-skipped=0
-
-# Walk every file under the template, preserving relative paths.
-# Using find + read keeps this POSIX and handles nested dirs.
-find "$SRC_DIR" -type f | while IFS= read -r src; do
-  rel=${src#"$SRC_DIR"/}
-  dest="$TARGET_DIR/$rel"
-
-  # Never distribute personal config — settings.local.json is per-developer and
-  # gitignored, so it must not be copied into a target project.
-  case "$rel" in
-    *settings.local.json)
-      echo "  skip   $rel (personal config, never distributed)"
-      continue
-      ;;
-  esac
-
-  if [ -e "$dest" ] && [ "$FORCE" != "1" ]; then
-    echo "  skip   $rel (exists)"
-    skipped=$((skipped + 1))
-    continue
-  fi
-
-  mkdir -p "$(dirname -- "$dest")"
-  cp "$src" "$dest"
-  echo "  write  $rel"
-  wrote=$((wrote + 1))
-done
-
-echo
-echo "Done. Next steps:"
-echo "  1. Edit CLAUDE.md and replace the placeholder content with your project's details."
-echo "  2. Review .claude/settings.json and add any permissions you want."
-echo "  3. Add your own commands, agents, and skills under .claude/."
+exec "$PY" "$SCRIPT_DIR/install.py" "$@"

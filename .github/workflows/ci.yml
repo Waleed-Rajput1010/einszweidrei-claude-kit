@@ -6,11 +6,19 @@ on:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - run: python3 scripts/validate.py
-      - run: sh -n install.sh
+      # Validator and installer are pure-Python — run them on every OS.
+      - run: python scripts/validate.py
+      - run: python install.py ci-install-test
+      # POSIX-only checks: the shell shim must stay syntactically valid.
+      - if: runner.os != 'Windows'
+        run: sh -n install.sh

@@ -26,7 +26,7 @@ component like source code you would run locally:
 
 - **Review** the contents before installing or enabling them in a project —
   especially the things that run automatically: `template/.claude/scripts/`
-  (e.g. `claude-audit.sh`) and `template/.claude/hooks/` (the pre-commit hook
+  (e.g. `claude-audit.py`) and `template/.claude/hooks/` (the pre-commit hook
   wired up in `settings.json`), alongside `commands/`, `agents/`, and `skills/`.
 - **Pin** to a specific git tag or release so you can audit exactly what you
   install instead of silently picking up changes from a branch.

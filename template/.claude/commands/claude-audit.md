@@ -6,7 +6,7 @@ allowed-tools: Bash, Read, Edit
 Run the consistency audit for the `.claude/` configuration kit:
 
 ```
-bash .claude/scripts/claude-audit.sh
+python .claude/scripts/claude-audit.py
 ```
 
 Then report a concise summary:

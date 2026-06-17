@@ -4,6 +4,10 @@
 # Dependencies
 node_modules/
 
+# Python (install.py / claude-audit.py are run directly; never commit bytecode)
+__pycache__/
+*.py[cod]
+
 # Environment secrets (keep examples)
 .env
 .env.*

@@ -86,7 +86,7 @@ copy of the template rather than the kit repo itself:
 ```sh
 tmp=$(mktemp -d) && git -C "$tmp" init -q
 cp template/CLAUDE.md "$tmp"/ && cp -r template/.claude "$tmp"/.claude
-( cd "$tmp" && bash .claude/scripts/claude-audit.sh )
+( cd "$tmp" && python .claude/scripts/claude-audit.py )
 ```
 
 It checks broken links, agent/rule frontmatter, the "Project precedence" line, and
