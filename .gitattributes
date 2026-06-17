@@ -7,6 +7,10 @@
 *.sh   text eol=lf
 *.py   text eol=lf
 
+# Git hooks are extensionless and executed directly by git — force LF so they
+# run on POSIX after a Windows checkout (and after the installer copies them).
+template/.githooks/* text eol=lf
+
 # Common explicit text types (kept LF in the repo via text=auto, listed for clarity).
 *.md   text
 *.json text

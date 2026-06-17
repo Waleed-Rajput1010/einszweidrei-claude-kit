@@ -6,6 +6,7 @@ Configures how Claude Code works in this repo. The layout is split into a
 
 ```
 CLAUDE.md                     # PORTABLE — stack-agnostic engineering standards (stays at repo root)
+.githooks/pre-commit          # PORTABLE — git pre-commit audit hook (enable: git config core.hooksPath .githooks)
 .claude/
 ├── README.md                 # PORTABLE — this file
 ├── workflow.md               # PORTABLE — the working loop + agent routing
@@ -21,9 +22,10 @@ CLAUDE.md                     # PORTABLE — stack-agnostic engineering standard
 │   ├── services.md           #   paths: **/Services/**
 │   ├── frontend.md           #   paths: **/*.{ts,tsx,vue,...}  — TS/React/Vue
 │   └── testing.md            #   paths: test files
-├── commands/                 # PORTABLE — slash commands (e.g. /claude-audit)
+├── commands/                 # PORTABLE — slash commands (/claude-audit, /kit-init)
 ├── scripts/                  # PORTABLE — kit utilities (claude-audit.py)
-├── hooks/                    # PORTABLE — hook scripts (pre-commit-audit.sh)
+├── hooks/                    # PORTABLE — hook scripts (pre-commit-audit.sh, session-start.sh)
+├── .kit-version              # PORTABLE — installed kit version (stamped by install.py)
 └── project/                  # PROJECT-SPECIFIC — do NOT copy to other repos
     ├── context.md            #   profile: stack, layout, conventions, key libraries
     └── …                     #   this repo's own docs (tech-debt register, refactor plans, ADRs)
@@ -31,15 +33,17 @@ CLAUDE.md                     # PORTABLE — stack-agnostic engineering standard
 
 ## Reusing this in another project
 
-1. Copy `CLAUDE.md` + `.claude/` into the new repo root — **but skip `.claude/project/`**.
-2. On the first task, Claude reads CLAUDE.md, finds `.claude/project/context.md`
-   missing, and **scaffolds it** by inspecting the codebase (language, framework, layout,
-   key libraries). No manual editing of the template needed — the portable files use
-   generic globs and defer project specifics to `context.md`.
-3. **Trim the agent roster** to the repo's stack. The kit ships backend-leaning agents
-   (`csharp-developer`, `sql-pro`, `azure-infra-engineer`, …) alongside frontend ones
-   (`react-developer`, `vue-developer`). Agents are inert until invoked, so extras are
-   harmless — but delete the irrelevant ones for a tidy `agents/` folder.
+1. From the kit repo, run `python install.py /path/to/your/project` (see the root
+   README). The installer copies the portable files, stamps `.kit-version`, and **runs the
+   kit's own audit** on the result — so a fresh install is consistent by construction.
+2. In the new repo, run **`/kit-init`** once. It inspects the codebase (language,
+   framework, layout, key libraries, test setup), writes `.claude/project/context.md`,
+   and wires the git pre-commit audit hook. No manual editing of the template needed — the
+   portable files use generic globs and defer project specifics to `context.md`.
+3. **Keep the full agent roster.** This is a *curated* set (~21 agents across backend,
+   frontend, infra, quality) — not a generic dump. Agents are inert until invoked, so the
+   ones your stack doesn't use cost nothing, and leaving them in keeps every repo's kit
+   identical and upgradeable via `python install.py update`.
 
 > The portable layer degrades gracefully: even before `context.md` exists, the generic
 > rules and standards apply. **Stack rules fire by file type** — `dotnet.md` only on `.cs`,

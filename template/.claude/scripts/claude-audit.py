@@ -7,14 +7,21 @@ WARN (exit 0): stale backtick path refs, project-name leakage, context.md drift.
 Cross-platform (Windows + Linux + macOS). Standard library only — no dependencies.
 
 Usage:
-    python claude-audit.py [--pre-commit]
+    python claude-audit.py [ROOT] [--pre-commit | --hook]
 
+    ROOT           Directory to audit (default: git toplevel, else CWD).
     (no flag)      Run the audit and print the full report. Exit 1 on FAIL, else 0.
     --pre-commit   Silent on PASS; on FAIL print guidance + report to stderr and
-                   exit 2 (which blocks a Claude Code `git commit` tool call).
+                   exit 2. Use from a git pre-commit hook (any non-zero blocks).
+    --hook         Claude Code PreToolUse(Bash) gate. Reads the hook payload on
+                   stdin, and runs the audit ONLY when the command is a `git commit`
+                   (allowing every other Bash call through with exit 0). Hook
+                   matchers filter on tool NAME only, so this command-level gate has
+                   to live here, in the script — not in settings.json.
 """
 
 import argparse
+import json
 import os
 import re
 import subprocess
@@ -40,6 +47,73 @@ def repo_root():
     except OSError:
         pass
     return os.getcwd()
+
+
+def command_from_hook_stdin():
+    """Extract tool_input.command from a PreToolUse JSON payload on stdin.
+
+    Returns the command string, or None if there is no payload / it doesn't parse /
+    it carries no command. Never raises — a hook must fail open, not crash.
+    """
+    try:
+        data = sys.stdin.read()
+    except (OSError, ValueError):
+        return None
+    if not data or not data.strip():
+        return None
+    try:
+        payload = json.loads(data)
+    except (ValueError, TypeError):
+        return None
+    if not isinstance(payload, dict):
+        return None
+    tool_input = payload.get("tool_input")
+    if not isinstance(tool_input, dict):
+        return None
+    cmd = tool_input.get("command")
+    return cmd if isinstance(cmd, str) else None
+
+
+# git global options that take a value, so the value token must be skipped when
+# scanning for the subcommand (e.g. `git -c core.x=y commit`).
+_GIT_OPTS_WITH_VALUE = {
+    "-c", "-C", "--git-dir", "--work-tree", "--namespace", "--exec-path", "--config-env",
+}
+
+
+def looks_like_git_commit(command):
+    """True if `command` invokes `git commit` in any of its simple sub-commands.
+
+    Handles compound commands (split on && || ; | newline), env-var prefixes
+    (`FOO=bar git commit`), a path to git (`/usr/bin/git`, `git.exe`), and git
+    global options before the subcommand (`git -c k=v --no-pager commit`). Avoids
+    false positives like `git log --grep commit`.
+    """
+    if not command:
+        return False
+    for segment in re.split(r"&&|\|\||;|\||\n", command):
+        tokens = segment.split()
+        i = 0
+        # Skip leading VAR=value environment assignments.
+        while i < len(tokens) and "=" in tokens[i] and not tokens[i].startswith("-"):
+            i += 1
+        if i >= len(tokens):
+            continue
+        if os.path.basename(tokens[i]).lower() not in ("git", "git.exe"):
+            continue
+        i += 1
+        # Skip git's global options (and any values they consume).
+        while i < len(tokens):
+            tok = tokens[i]
+            if tok in _GIT_OPTS_WITH_VALUE:
+                i += 2
+            elif tok.startswith("-"):
+                i += 1
+            else:
+                break
+        if i < len(tokens) and tokens[i] == "commit":
+            return True
+    return False
 
 
 def read(path):
@@ -292,20 +366,40 @@ def run_audit(root):
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="claude-audit.py")
     parser.add_argument(
+        "root",
+        nargs="?",
+        default=None,
+        help="Directory to audit (default: git toplevel, else CWD).",
+    )
+    gate = parser.add_mutually_exclusive_group()
+    gate.add_argument(
         "--pre-commit",
         action="store_true",
         help="Silent on PASS; on FAIL print guidance to stderr and exit 2.",
     )
+    gate.add_argument(
+        "--hook",
+        action="store_true",
+        help="PreToolUse(Bash) gate: read the hook payload on stdin and audit only "
+        "git-commit commands. Allows every other Bash call through (exit 0).",
+    )
     args = parser.parse_args(argv if argv is not None else sys.argv[1:])
 
-    root = repo_root()
+    # --hook self-gates to git commits: the matcher fires this on EVERY Bash call, so
+    # we inspect the command and bail out (allow) unless it's an actual `git commit`.
+    if args.hook:
+        cmd = command_from_hook_stdin()
+        if not looks_like_git_commit(cmd):
+            return 0
+
+    root = os.path.abspath(args.root) if args.root else repo_root()
     try:
         os.chdir(root)
     except OSError:
         pass
     fail, _warn, report = run_audit(root)
 
-    if args.pre_commit:
+    if args.pre_commit or args.hook:
         if fail:
             print("BLOCKED: the .claude kit audit FAILED - fix before committing.", file=sys.stderr)
             print("\n".join(report), file=sys.stderr)

@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-17
+
+### Added
+
+- **`/kit-init`** — one first-run command that inspects the target repo (stack,
+  layout, key libraries, test setup), generates `.claude/project/context.md` (and
+  removes its placeholder banner), wires the git pre-commit audit hook, and verifies.
+  Collapses all per-project setup into a single step.
+- **Self-validating install** — `install.py` now runs the kit's own audit against
+  the freshly-installed files as its last step and exits non-zero on FAIL, so it is
+  impossible to leave behind an artifact that fails the kit's own audit.
+- **`install.py update`** — refreshes the portable kit files to a newer version
+  while preserving project state: `.claude/project/**` (`context.md`, `tech-debt.md`)
+  and `.claude/settings.local.json` are never touched, and `settings.json` is backed
+  up to `settings.json.bak` before it is refreshed.
+- **Kit versioning** — the installed version is stamped into `.claude/.kit-version`
+  (single source of truth: `plugin.json`).
+- **`.githooks/pre-commit`** — a real git pre-commit audit hook that gates *human*
+  commits (the PreToolUse hook only sees commits Claude makes). Enabled via
+  `git config core.hooksPath .githooks` (done automatically by `/kit-init`).
+- **`session-start.sh`** — a toolchain-agnostic `SessionStart` bootstrap hook that
+  runs a project setup script (`$KIT_SETUP_SCRIPT`, else `scripts/setup*.sh`) so
+  cloud/web containers can install their toolchain on session start; safe no-op when
+  no setup script exists.
+
 ### Changed
 
 - Cross-platform installer and audit: ported `install.sh` and the bash
@@ -16,6 +41,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `pre-commit-audit.sh` are now thin POSIX launchers that forward to the Python
   scripts (single source of truth). CI now runs the validator and installer on
   both `ubuntu-latest` and `windows-latest`.
+- The curated agent roster is now the supported set — the README no longer tells
+  consumers to prune it; updates keep every repo's kit identical.
+- CI now also runs the kit's own audit against the installed copy and validates the
+  `settings.json` hooks block against the Claude Code hook schema (rejecting
+  unsupported per-hook fields such as `if:`).
+- `install.py` no longer copies `__pycache__`/`*.pyc` bytecode into targets.
+
+### Fixed
+
+- **Audit hook fired on every Bash call.** `settings.json` gated the PreToolUse
+  hook with an unsupported `if: "Bash(git commit*)"` field, which Claude Code
+  silently ignores (matchers filter on the tool NAME only). The git-commit gate now
+  lives in `claude-audit.py --hook`, which reads the PreToolUse stdin payload and
+  runs the audit only on an actual `git commit` — and no longer blocks unrelated
+  Bash calls (e.g. when Python is unavailable).
 
 ### Removed
 
@@ -63,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the per-repo instance exists, and README format-guides are excluded from the
   agent/rule frontmatter checks.
 
-[Unreleased]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/releases/tag/v0.1.0

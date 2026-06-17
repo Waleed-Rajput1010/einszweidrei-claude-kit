@@ -18,7 +18,16 @@ jobs:
           python-version: "3.x"
       # Validator and installer are pure-Python — run them on every OS.
       - run: python scripts/validate.py
+      # install.py self-validates (runs the kit's own audit and exits non-zero on FAIL),
+      # so a packaged artifact that fails the audit fails the build here.
       - run: python install.py ci-install-test
-      # POSIX-only checks: the shell shim must stay syntactically valid.
+      # Assert the audit result explicitly, too, for visibility in the CI logs.
+      - run: python ci-install-test/.claude/scripts/claude-audit.py ci-install-test
+      # POSIX-only checks: the shell shims/hooks must stay syntactically valid.
       - if: runner.os != 'Windows'
         run: sh -n install.sh
+      - if: runner.os != 'Windows'
+        run: |
+          sh -n template/.claude/hooks/pre-commit-audit.sh
+          sh -n template/.claude/hooks/session-start.sh
+          sh -n template/.githooks/pre-commit
