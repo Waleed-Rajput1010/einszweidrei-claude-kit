@@ -12,6 +12,8 @@ How to work in this repo. Stack-agnostic; project specifics: [project/context.md
 
 Trivial edits (typos, comments, formatting, config tweaks) may skip steps 2 and 5.
 
+Commit messages follow [rules/commits.md](rules/commits.md) — Conventional Commits + imperative 50/72 style; `release-manager` turns the commit types into the changelog entry and version bump.
+
 ## Delegate vs. do inline
 - **Inline:** small, localized changes within the current context.
 - **Delegate to a subagent when:** the task is a self-contained chunk needing deep focus or a different specialty; it benefits from an isolated context; or you need an independent review (code/architecture). Give the agent the file paths and the goal; one responsibility per delegation.

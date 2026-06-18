@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-18
+
+### Added
+
+- **Commit conventions** — new always-on `rules/commits.md` standardizing Conventional
+  Commits (`type(scope): summary`, `BREAKING CHANGE`/issue trailers) plus the imperative
+  50/72 message style, referenced from `workflow.md`.
+
+### Changed
+
+- **`release-manager`** now maps commit types to changelog sections and the SemVer bump
+  (`feat`→Added/minor, `fix`→Fixed/patch, `BREAKING CHANGE`→major), tying the release
+  ritual to the new commit convention.
+
 ## [0.4.0] - 2026-06-18
 
 ### Added
@@ -112,7 +126,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the per-repo instance exists, and README format-guides are excluded from the
   agent/rule frontmatter checks.
 
-[Unreleased]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.1.0...v0.2.0
