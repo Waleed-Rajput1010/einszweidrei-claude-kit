@@ -15,4 +15,6 @@ Extends [CLAUDE.md](../../CLAUDE.md) Testing Standards. Auto-applies when editin
 - Test method names: **`MethodName_Scenario_ExpectedResult`**.
 - Unit-test the application/service layer against mocked interfaces; integration-test repositories/controllers.
 - Cover edge cases and failure paths, not just the happy path.
-- Tests isolated and deterministic. Target **≥ 80% coverage** on changed service-layer code.
+- Tests isolated and **deterministic** — no real clock, network, filesystem, `Thread.Sleep`, or randomness; order-independent and repeatable. Target **≥ 80% coverage** on changed service-layer code.
+
+Applicable gates: [code-review.md](code-review.md).

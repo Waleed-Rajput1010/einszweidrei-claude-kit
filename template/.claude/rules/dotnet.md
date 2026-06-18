@@ -20,11 +20,13 @@ Auto-applies when editing C#. Extends [CLAUDE.md](../../CLAUDE.md). Project laye
 - Guard arguments with `ArgumentNullException.ThrowIfNull(...)`. Async methods suffixed `Async`. XML docs on public APIs. Dispose `IDisposable` with `using`. No abbreviations / Hungarian notation.
 
 ## Async & concurrency
-- Async all the way; **no sync-over-async** (`.Result`, `.Wait()`, `.GetAwaiter().GetResult()`). Avoid `async void` (except event handlers).
+- Async all the way; **no sync-over-async** (`.Result`, `.Wait()`, `.GetAwaiter().GetResult()`). **Never `async void`** except event handlers.
 - Propagate `CancellationToken` end-to-end.
 - `DbContext` is not thread-safe — **no `Task.WhenAll` over a shared context**; parallelize only with separate DI scopes.
 - External calls: `IHttpClientFactory` (never `new HttpClient`); wrap in retry + timeout policies (Polly).
 
 ## Patterns & data
 - Reuse the project's patterns — Repository + Unit of Work, Factory, Strategy, Decorator, Options. `SaveChanges` only via the Unit of Work. Don't introduce MediatR without approval.
+
+Applicable gates: [code-review.md](code-review.md).
 - Use the project's configured mapper / structured logger / typed exceptions (see `project/context.md`); never log PII/secrets.

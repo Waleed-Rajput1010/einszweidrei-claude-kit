@@ -8,7 +8,7 @@ paths:
 
 Auto-applies when editing services. Full standards: [CLAUDE.md](../../CLAUDE.md). Project stack: [project/context.md](../project/context.md).
 
-- **SRP:** one cohesive responsibility per service. **Class ≤ ~500 lines, method ≤ ~50, complexity < 10.** If it grows beyond that or mixes concerns, split it.
+- **SRP:** one cohesive responsibility per service; split it when it mixes concerns or exceeds the size/complexity gates ([code-review.md](code-review.md)).
 - Business logic belongs here — not in controllers, not in repositories.
 - Depend on **abstractions** via DI; never `new` a dependency; no Service Locator.
 - Reuse approved patterns (Repository/UoW, Factory, Strategy, Decorator, Options). Don't reinvent; don't introduce new frameworks (e.g. MediatR) without approval.
@@ -17,3 +17,5 @@ Auto-applies when editing services. Full standards: [CLAUDE.md](../../CLAUDE.md)
 - Async end-to-end; propagate `CancellationToken`. `DbContext` is not thread-safe — no `Task.WhenAll` over a shared context; parallelize only with separate DI scopes.
 
 Oversized services tracked for this project: [project/tech-debt.md](../project/tech-debt.md).
+
+Applicable gates: [code-review.md](code-review.md).

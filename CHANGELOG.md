@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-06-18
+
+### Changed
+
+- **Standards are sharper and de-duplicated.** `code-review.md` is now the single source of
+  truth for the blocking gate thresholds (complexity, method/class size, coverage); `CLAUDE.md`
+  keeps the principles and links to them instead of restating the numbers (removes drift with
+  `CLAUDE.md` and `services.md`).
+- **Core gates de-coupled from .NET.** The universal "Docs synced" gate no longer hard-codes
+  ASP.NET specifics (`[ProducesResponseType]`, XML docs) — those moved to the controllers
+  rule; the core gate now names the stack's own doc convention (XML docs / JSDoc / docstrings).
+- **Vague/bypassable gates made checkable** — "unless anonymity is justified", "no
+  over-engineering", "thin controllers / no business logic", "only at proven hotspots", and
+  "avoid `async void`" are now concrete, objectively reviewable rules.
+
+### Added
+
+- **New gates:** dependency approval (no new third-party dependency without a recorded
+  reason), an explicit error-handling rule (no empty catch / rethrow-with-context), test
+  determinism (no real clock/network/sleep/randomness), and API backward-compatibility
+  (breaking changes versioned or flagged).
+- Each layer/stack rule now cross-links the applicable gates in `code-review.md`.
+
 ## [0.5.0] - 2026-06-18
 
 ### Added
@@ -126,7 +149,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the per-repo instance exists, and README format-guides are excluded from the
   agent/rule frontmatter checks.
 
-[Unreleased]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/EinsZweiDrei-ai/einszweidrei-claude-kit/compare/v0.2.0...v0.3.0

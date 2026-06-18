@@ -24,5 +24,7 @@ Auto-applies when editing frontend code. Extends [CLAUDE.md](../../CLAUDE.md). U
 ## Quality
 - **Accessibility:** semantic HTML, labels, keyboard navigation, focus management — target WCAG AA.
 - **Security:** never render untrusted input as raw HTML (`dangerouslySetInnerHTML` / `v-html`); no secrets in client code.
-- **Performance:** measure first; code-split; memoize/virtualize only at proven hotspots; stable list keys.
+- **Performance:** measure first; code-split; memoize/virtualize **only after a profiler/measurement shows the hotspot** (cite it); stable list keys.
 - **Tests:** behavior over implementation with the project's runner (Vitest/Jest + Testing Library); cover interaction and edge/error states.
+
+Applicable gates: [code-review.md](code-review.md).

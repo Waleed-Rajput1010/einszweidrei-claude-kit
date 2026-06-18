@@ -17,12 +17,13 @@ while any **Gate** item fails.
 ## 🚦 Gates (blocking)
 
 - [ ] No new **Forbidden Anti-Pattern** (see CLAUDE.md): god class, magic strings, service locator, swallowed error, newing dependencies, dead/commented code.
+- [ ] **No new third-party dependency** (package/framework) without a note in [context.md](../project/context.md) or [tech-debt.md](../project/tech-debt.md) recording why it's needed.
 - [ ] Cyclomatic complexity **< 10** per method.
 - [ ] Method **≤ ~50 lines**; class/module **≤ ~500 lines** (new/changed types).
-- [ ] Inputs validated; access secured (authn/authz) unless anonymity is justified.
+- [ ] Inputs validated; access secured (authn/authz). Any public/anonymous endpoint states a one-line reason in code or [tech-debt.md](../project/tech-debt.md).
 - [ ] No secrets in code; no internal error detail leaked to clients.
 - [ ] Changed core logic has tests; coverage **≥ 80%** on changed code.
-- [ ] **Docs synced** with the change: public API/behavior changes have updated in-code docs (XML/docstrings); new or changed endpoints, config, env vars, or setup reflected in README/usage docs; user-facing changes have a changelog/release-notes entry (`release-manager`); when the project exposes Swagger/OpenAPI, the spec is current — annotations (`[ProducesResponseType]`, XML docs, request/response schemas) match every added, changed, or removed endpoint, with no stale or missing operations.
+- [ ] **Docs synced** with the change: public API/behaviour changes have updated in-code docs in the stack's convention (XML docs / JSDoc / docstrings); new, changed, or removed endpoints are reflected in the API spec where one exists (e.g. OpenAPI/Swagger — see the relevant layer rule); config/env/setup changes reflected in README/usage docs; user-facing changes have a changelog/release-notes entry (`release-manager`).
 - [ ] **Structure & placement**: new/moved files are in the correct folder per `.claude/project/context.md`; dead files removed when their code is removed; no stray files at the repo root; no build artifacts/temp/`.bak` committed; folder & naming conventions followed.
 - [ ] **Stack-specific gates pass** for the files touched (see the matching rule).
 
@@ -38,14 +39,14 @@ while any **Gate** item fails.
 
 ## ✅ Design & OOP
 
-- [ ] Reuses a well-known pattern rather than reinventing; no over-engineering.
+- [ ] Reuses a well-known pattern rather than reinventing; no new abstraction/interface/layer without a second concrete caller or a documented requirement.
 - [ ] Composition preferred over inheritance.
 - [ ] Encapsulation intact — no invariant-breaking public setters.
 - [ ] Named constants/enums instead of magic values; no primitive obsession.
 
 ## ✅ KISS / DRY / YAGNI
 
-- [ ] Simplest solution that meets the requirement; no speculative abstraction.
+- [ ] No speculative abstraction or unused extensibility — built only for the current requirement (YAGNI).
 - [ ] No duplicated logic that should be shared.
 - [ ] Nothing built "just in case."
 
@@ -53,7 +54,7 @@ while any **Gate** item fails.
 
 - [ ] Validation, mapping, logging, and error handling use the project's configured stack ([project/context.md](../project/context.md)) — no ad-hoc substitutes.
 - [ ] Structured logs only; no PII/secrets logged.
-- [ ] Errors handled by the project's error-handling approach; nothing swallowed.
+- [ ] Error handling: no empty catch; every catch either handles the error or rethrows with context (no catch-log-continue that hides failure); errors flow through the project's error-handling approach.
 
 ## ✅ Code Quality
 
